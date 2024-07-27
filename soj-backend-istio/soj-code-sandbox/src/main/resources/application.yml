@@ -1,0 +1,14 @@
+server:
+  port: 8004
+
+dubbo:
+  application:
+    name: soj-code-sandbox-service
+    qos-accept-foreign-ip: true
+    qos-enable: true
+    metadata-service-port: 20885
+  registry:
+    address: N/A
+  protocol:
+    name: tri
+    port: 50052

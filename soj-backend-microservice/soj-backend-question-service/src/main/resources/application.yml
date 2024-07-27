@@ -1,0 +1,47 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  application:
+    name: soj-backend-question-service
+  profiles:
+    active: prod
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  mvc:
+    format:
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd HH:mm:ss # 日期格式
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss # 日期格式
+    time-zone: GMT+8 # 时区
+    serialization:
+      write-dates-as-timestamps: false # 是否将日期转换为时间戳
+
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+
+server:
+  port: 8103
+  servlet:
+    context-path: /api/question
+    session:
+      cookie:
+        max-age: 7200
+        path: /api
+
+# mybatis-plus配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete # 全局逻辑删除的实体字段名
+      logic-delete-value: 1 # 逻辑已删除值（默认为 1）
+      logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+      id-type: assign_id # 主键类型 assign_id:雪花算法 (限制爬虫)

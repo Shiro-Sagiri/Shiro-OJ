@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.sojbackendquestionservice.mapper.QuestionSubmitMapper">
+    <select id="pageQuery" resultType="com.shiro.sojbackendmodel.model.entity.QuestionSubmit">
+        select
+        qs.code,
+        qs.status,
+        qs.createTime,
+        qs.updateTime,
+        qs.judgeInfo,
+        qs.id,
+        qs.language,
+        qs.userId,
+        qs.questionId
+        from question_submit qs
+        inner join question q on qs.questionId = q.id
+        <where>
+            <if test="questionSubmitQueryRequest.title != null">
+                and q.title like concat('%',#{questionSubmitQueryRequest.title},'%')
+            </if>
+            <if test="questionSubmitQueryRequest.tags != null">
+                <foreach collection="questionSubmitQueryRequest.tags" item="tag" index="index" separator=" ">
+                    and q.tags like concat('%"',#{tag},'"%')
+                </foreach>
+            </if>
+            <if test="questionSubmitQueryRequest.language != null">
+                and qs.language = #{questionSubmitQueryRequest.language}
+            </if>
+            <if test="questionSubmitQueryRequest.status != null">
+                and qs.status = #{questionSubmitQueryRequest.status}
+            </if>
+            <if test="questionSubmitQueryRequest.questionId != null">
+                and qs.questionId = #{questionSubmitQueryRequest.questionId}
+            </if>
+            <if test="questionSubmitQueryRequest.userId != null">
+                and q.userId = #{questionSubmitQueryRequest.userId}
+            </if>
+        </where>
+        order by qs.updateTime desc
+        limit ${questionSubmitQueryRequest.pageSize*(questionSubmitQueryRequest.current-1)},
+        #{questionSubmitQueryRequest.pageSize}
+    </select>
+    <select id="getTotal" resultType="java.lang.Long">
+        select count(*)
+        from question_submit qs
+        inner join question q on qs.questionId = q.id
+        <where>
+            <if test="questionSubmitQueryRequest.title != null">
+                and q.title like concat('%',#{questionSubmitQueryRequest.title},'%')
+            </if>
+            <if test="questionSubmitQueryRequest.tags != null">
+                <foreach collection="questionSubmitQueryRequest.tags" item="tag" index="index" separator=" ">
+                    and q.tags like concat('%"',#{tag},'"%')
+                </foreach>
+            </if>
+            <if test="questionSubmitQueryRequest.language != null">
+                and qs.language = #{questionSubmitQueryRequest.language}
+            </if>
+            <if test="questionSubmitQueryRequest.status != null">
+                and qs.status = #{questionSubmitQueryRequest.status}
+            </if>
+            <if test="questionSubmitQueryRequest.questionId != null">
+                and qs.questionId = #{questionSubmitQueryRequest.questionId}
+            </if>
+            <if test="questionSubmitQueryRequest.userId != null">
+                and q.userId = #{questionSubmitQueryRequest.userId}
+            </if>
+        </where>
+    </select>
+</mapper>

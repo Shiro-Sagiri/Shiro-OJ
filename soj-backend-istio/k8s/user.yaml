@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-deployment
+  namespace: soj
+  labels:
+    app: user-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      name: user-pod
+      labels:
+        app: user
+    spec:
+      containers:
+        - name: user
+          image: soj-backend-user-service/openjdk:v1.0
+          ports:
+            - name: grpc-tri
+              containerPort: 50052
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: soj
+spec:
+  sessionAffinity: None
+  selector:
+    app: user
+  ports:
+    - port: 8001
+      name: http-spring
+      targetPort: 8001
+    - port: 50052
+      protocol: TCP
+      name: grpc-tri
+      targetPort: 50052

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: question-deployment
+  namespace: soj
+  labels:
+    app: question-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: question-deployment
+  template:
+    metadata:
+      name: question-deployment
+      labels:
+        app: question-deployment
+    spec:
+      containers:
+        - name: question-deployment
+          image: soj-backend-question-service/openjdk:v1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 50052
+              name: grpc-tri
+            - containerPort: 8002
+              name: http-question
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: question-service
+  namespace: soj
+  labels:
+    app: question-service
+spec:
+  sessionAffinity: None
+  selector:
+    app: question-deployment
+  ports:
+    - protocol: TCP
+      port: 50052
+      targetPort: 50052
+      name: grpc-dubbo
+    - port: 8002
+      targetPort: 8002
+      name: http-question

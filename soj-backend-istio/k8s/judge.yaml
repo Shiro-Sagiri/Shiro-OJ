@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: judge-deployment
+  namespace: soj
+  labels:
+    app: judge-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: judge-deployment
+  template:
+    metadata:
+      name: judge-deployment
+      labels:
+        app: judge-deployment
+    spec:
+      containers:
+        - name: judge-deployment
+          image: soj-backend-judge-service/openjdk:v1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 50052
+              name: grpc-tri
+            - containerPort: 8003
+              name: http-judge
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: judge-service
+  namespace: soj
+  labels:
+    app: judge-service
+spec:
+  sessionAffinity: None
+  selector:
+    app: judge-deployment
+  ports:
+    - protocol: TCP
+      port: 50052
+      targetPort: 50052
+      name: grpc-dubbo
+    - port: 8002
+      targetPort: 8003
+      name: http-judge

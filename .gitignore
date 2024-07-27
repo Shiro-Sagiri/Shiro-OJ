@@ -1,0 +1,4 @@
+.idea
+*.iml
+**/application-prod.yml
+**/target

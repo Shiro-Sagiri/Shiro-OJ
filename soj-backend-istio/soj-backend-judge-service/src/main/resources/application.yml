@@ -1,0 +1,49 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  application:
+    name: soj-backend-judge-service
+  profiles:
+    active: prod
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  mvc:
+    format:
+      date: yyyy-MM-dd
+      date-time: yyyy-MM-dd HH:mm:ss # 日期格式
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss # 日期格式
+    time-zone: GMT+8 # 时区
+    serialization:
+      write-dates-as-timestamps: false # 是否将日期转换为时间戳
+
+dubbo:
+  application:
+    name: soj-backend-judge-service
+    qos-accept-foreign-ip: true
+    qos-enable: true
+    metadata-service-port: 20885
+  registry:
+    address: N/A
+  protocol:
+    name: tri
+    port: 50052
+  consumer:
+    mesh-enable: true
+    timeout: 30000
+
+server:
+  port: 8003
+  servlet:
+    context-path: /api/judge
+    session:
+      cookie:
+        max-age: 7200
+        path: /api
+
+codeSendBox:
+  type: remote

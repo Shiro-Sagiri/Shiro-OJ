@@ -1,0 +1,60 @@
+spring:
+  profiles:
+    active: prod
+  application:
+    name: soj-backend-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+    gateway:
+      routes:
+        - id: soj-backend-user-service
+          uri: lb://soj-backend-user-service
+          predicates:
+            - Path=/api/user/**
+        - id: soj-backend-question-service
+          uri: lb://soj-backend-question-service
+          predicates:
+            - Path=/api/question/**
+        - id: soj-backend-judge-service
+          uri: lb://soj-backend-judge-service
+          predicates:
+            - Path=/api/judge/**
+      globalcors: #跨域问题
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:8103"
+              - "http://localhost:8101"
+              - "http://localhost:8102"
+              - "http://localhost:8104"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+            maxAge: 360000
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - OPTIONS
+              - HEAD
+          default-filters:
+            - DedupeResponseHeader=Vary Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+server:
+  port: 8101
+
+knife4j:
+  gateway:
+    # ① 第一个配置，开启gateway聚合组件
+    enabled: true
+    # ② 第二行配置，设置聚合模式采用discover服务发现的模式
+    strategy: discover
+    discover:
+      # ③ 第三行配置，开启discover模式
+      enabled: true
+      # ④ 第四行配置，聚合子服务全部为Swagger2规范的文档
+      version: swagger2

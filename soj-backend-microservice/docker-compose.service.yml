@@ -1,0 +1,55 @@
+version: '3'
+services:
+
+  soj-backend-gateway:
+    container_name: soj-backend-gateway
+    build: # 服务的 Docker 构建文件的位置
+      context: ./soj-backend-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8101:8101"
+    networks:
+      - soj-network
+
+  soj-backend-user-service:
+    container_name: soj-backend-user-service
+    build: # 服务的 Docker 构建文件的位置
+      context: ./soj-backend-user-service
+      dockerfile: Dockerfile
+    ports:
+      - "8102:8102"
+    networks:
+      - soj-network
+    depends_on: # 依赖的服务,控制启动顺序
+      - soj-backend-gateway
+
+  soj-backend-question-service:
+    container_name: soj-backend-question-service
+    build: # 服务的 Docker 构建文件的位置
+      context: ./soj-backend-question-service
+      dockerfile: Dockerfile
+    ports:
+      - "8103:8103"
+    networks:
+      - soj-network
+    depends_on: # 依赖的服务,控制启动顺序
+      - soj-backend-user-service
+      - soj-backend-gateway
+
+  soj-backend-judge-service:
+    container_name: soj-backend-judge-service
+    build: # 服务的 Docker 构建文件的位置
+      context: ./soj-backend-judge-service
+      dockerfile: Dockerfile
+    ports:
+      - "8104:8104"
+    networks:
+      - soj-network
+    depends_on: # 依赖的服务,控制启动顺序
+      - soj-backend-user-service
+      - soj-backend-question-service
+      - soj-backend-gateway
+
+networks:
+  soj-network:
+    driver: bridge

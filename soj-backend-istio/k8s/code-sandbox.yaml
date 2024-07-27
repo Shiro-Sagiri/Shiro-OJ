@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-sandbox-deployment
+  namespace: soj
+  labels:
+    app: code-sandbox-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-sandbox-deployment
+  template:
+    metadata:
+      name: code-sandbox-deployment
+      labels:
+        app: code-sandbox-deployment
+    spec:
+      containers:
+        - name: code-sandbox-deployment
+          image: soj-code-sandbox-service/openjdk:v1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 50052
+              name: grpc-tri
+            - containerPort: 8004
+              name: http-sandbox
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: code-sandbox-service
+  namespace: soj
+  labels:
+    app: code-sandbox-service
+spec:
+  sessionAffinity: None
+  selector:
+    app: code-sandbox-deployment
+  ports:
+    - protocol: TCP
+      port: 50052
+      targetPort: 50052
+      name: grpc-dubbo
+    - port: 8002
+      targetPort: 8004
+      name: http-code-sandbox
